@@ -1,0 +1,10 @@
+{
+  "name": "일본어 단어장",
+  "short_name": "일본어",
+  "description": "일본어 낱말카드 단어장 앱",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#e11d48",
+  "icons": []
+}

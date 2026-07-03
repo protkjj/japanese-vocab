@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="일본어 단어장">
+  <title>일본어 단어장</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    // Firebase 리다이렉트 잔여 데이터 강제 정리
+    try {
+      Object.keys(sessionStorage).forEach(key => {
+        if (key.includes('firebase') || key.includes('pendingRedirect')) {
+          sessionStorage.removeItem(key);
+        }
+      });
+    } catch(e) {}
+
+    // 서비스 워커 캐시 정리
+    if ('serviceWorker' in navigator && !localStorage.getItem('jp_sw_cleaned_v1')) {
+      localStorage.setItem('jp_sw_cleaned_v1', 'true');
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.unregister());
+      });
+      caches.keys().then(keys => {
+        keys.forEach(k => caches.delete(k));
+      });
+    }
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>
