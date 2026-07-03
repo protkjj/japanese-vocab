@@ -159,6 +159,9 @@ function parseBulkWords(text) {
     .map(line => line.trim())
     .filter(line => line.length > 0)
     .map(line => {
+      // 줄 앞의 번호 제거: "1. たべる — 먹다" → "たべる — 먹다"
+      line = line.replace(/^\d+[\.\)]\s*/, '');
+
       // 1) em dash 구분자: "たべる — 먹다"
       let idx = line.indexOf(' — ');
       if (idx > 0) {
@@ -169,7 +172,15 @@ function parseBulkWords(text) {
       if (idx > 0) {
         return { term: line.slice(0, idx).trim(), definition: line.slice(idx + 3).trim() };
       }
-      // 3) 구분자 없이 공백만: 일본어 뒤에 한글이 오는 지점에서 분리
+      // 3) 콜론 구분자: "たべる : 먹다" 또는 "たべる: 먹다"
+      idx = line.indexOf(':');
+      if (idx > 0) {
+        const def = line.slice(idx + 1).trim();
+        if (def) {
+          return { term: line.slice(0, idx).trim(), definition: def };
+        }
+      }
+      // 4) 구분자 없이 공백만: 일본어 뒤에 한글이 오는 지점에서 분리
       //    "たべる 먹다" → term: "たべる", definition: "먹다"
       const spaceMatch = line.match(/^(.+?)\s+([\uAC00-\uD7AF\u3131-\u318E~(].*)$/);
       if (spaceMatch) {
